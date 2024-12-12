@@ -37,7 +37,7 @@ For encoding, null bytes, and parameter pollution, users can specify which param
 ### Add Custom Headers
 Insert custom headers into the request. For example:
 ```
-X-Forwarded-For: 127.0.0.2
+X-Forwarded-For: 127.0.0.1
 ```
 
 ### Change User Agent
