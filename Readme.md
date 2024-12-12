@@ -31,7 +31,7 @@ For encoding, null bytes, and parameter pollution, users can specify which param
    - Click on the OK button.
 
 2. **Intercepting Traffic**:
-   - In the 429 Bypasser tab added at the top of the page, you can see the requests this extension sends. You can also sort the sent requests based on the Status Code column so that you can easily find the desired request if this limitation is bypassed.
+   - In the 429 Bypasser tab added at the top of the Burp Suite, you can see the requests this extension sends. You can also sort the sent requests based on the Status Code column so that you can easily find the desired request if this limitation is bypassed.
 
 ## Methods Explained
 ### Add Custom Headers
@@ -39,9 +39,10 @@ Insert custom headers into the request. For example:
 ```
 X-Forwarded-For: 127.0.0.1
 ```
+You can see the full list of headers this extension adds at <a href="https://gist.github.com/kaimi-/6b3c99538dce9e3d29ad647b325007c1" target="_blank">this address</a>
 
 ### Change User Agent
-Set some specific user-agent strings to evade detection.
+Set some specific user-agent strings to bypass rate-limit.
 
 ### Use Capital Letters
 It randomly capitalizes some characters in the path and sends the request. For example:
@@ -61,7 +62,7 @@ https://example.com/resource?id=123&random=4895
 ```
 
 ### Server-side HTTP Parameter Pollution
-Adds a duplicate parameter with different values.
+Adds duplicate parameters with different values.
 ```
 Orginal: https://example.com/resource?username=admin
 Changed:
@@ -73,7 +74,7 @@ https://example.com/resource?username=admin2&username=admin
 Switch between methods like `GET`, `POST`, `PUT`, etc.
 
 ### Route Alteration
-Modify URL paths, e.g.,
+Modify URL paths
 ```
 https://example.com/resource
 ```
