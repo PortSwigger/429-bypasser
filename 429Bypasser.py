@@ -208,7 +208,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
         callbacks.setExtensionName("429 Bypasser")
-        print("Hello Burp")
+        #print("Hello Burp")
 
         callbacks.registerHttpListener(self)
         callbacks.addSuiteTab(self)
@@ -329,7 +329,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
             self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
             self.messages.append(response)
             self.request_counter += 1
-            print("Sent modified request with null byte variant, received status:", status_code)
+            #print("Sent modified request with null byte variant, received status:", status_code)
     
     def getRequestHeadersAndBody(self, content):
         request = content.getRequest()
@@ -400,7 +400,6 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
         bodyp = body
         path, url = self.getpath(selected_message)
         http_service = selected_message.getHttpService()
-        print(random_parameter)
         # Modify headers if "Add Custom Headers" is selected
         if add_headers:
             for header in self.HEADERS_LIST:
@@ -433,7 +432,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 self.messages.append(response)
                 self.request_counter += 1
                 
-                print("Sent request with header '{0}', received status: {1}".format(header, status_code))
+                #print("Sent request with header '{0}', received status: {1}".format(header, status_code))
         if change_user_agent:
             for agent in self.USER_AGENTS:
                 # Change User-Agent if "Change User Agent" is selected
@@ -463,7 +462,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                 self.messages.append(response)
                 self.request_counter += 1
-                print("Sent request with header '{0}', received status: {1}".format(agent, status_code))
+                #print("Sent request with header '{0}', received status: {1}".format(agent, status_code))
                 
         if using_capital_letters:
             num_variations = 10
@@ -512,11 +511,10 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                 self.messages.append(response)
                 self.request_counter += 1
-                print("Sent request with new url '{0}', received status: {1}".format(new_url, status_code))
+                #print("Sent request with new url '{0}', received status: {1}".format(new_url, status_code))
                 variations += 1
 
         if random_parameter:
-            print("test")
             # Generate a random value
             random_value = random.randint(1000, 9999)
             random_param = "random={}".format(random_value)
@@ -549,7 +547,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                     self.messages.append(response)
                     self.request_counter += 1
-                    print("Sent request with Random Parameter received status: {0}".format(status_code))
+                    #print("Sent request with Random Parameter received status: {0}".format(status_code))
                 elif "application/json" in content_type:
                 # Add random JSON parameter to the body if it's valid JSON
                     try:
@@ -565,7 +563,6 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         modified_bodyp = json.dumps(json_bodyp)
                         # Rebuild the request with modified body
                         new_message = self._helpers.buildHttpMessage(headersp, modified_bodyp)
-                        print("Modified JSON request with random parameter:", random_key, "=", random_value)
                         response = self._callbacks.makeHttpRequest(http_service, new_message)
                         # Print the response status code for verification
                         status_code = self._helpers.analyzeResponse(response.getResponse()).getStatusCode()
@@ -584,7 +581,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                         self.messages.append(response)
                         self.request_counter += 1
-                        print("Sent request with Random Parameter received status: {0}".format(status_code))
+                        #print("Sent request with Random Parameter received status: {0}".format(status_code))
                     
                     except ValueError:
                         # If the body isn't valid JSON, print an error message
@@ -619,7 +616,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                 self.messages.append(response)
                 self.request_counter += 1
-                print("Sent request with Random Parameter received status: {0}".format(status_code))
+                #print("Sent request with Random Parameter received status: {0}".format(status_code))
             
         if HttPP:
             
@@ -630,7 +627,6 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
             
             if method in ["GET", "HEAD", "OPTIONS"]:
                 polluted_urls = self.generatePollutedUrls(url, params_to_modify=params_to_modify)
-                print(polluted_urls)
                 for polluted_url in polluted_urls:
                     modified_headers = headers[:]
                     first_line = modified_headers[0].split(" ")
@@ -658,7 +654,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                     self.messages.append(response)
                     self.request_counter += 1
-                    print("Sent request for polluted URL '{0}', received status: {1}".format(polluted_url, status_code))
+                    #print("Sent request for polluted URL '{0}', received status: {1}".format(polluted_url, status_code))
 
             elif method in ["POST", "PUT", "PATCH"]:
                 content_type = self.getContentType(headersp)
@@ -696,7 +692,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code1])
                         self.messages.append(response1)
                         self.request_counter += 1
-                        print("Sent form-urlencoded polluted request with '{0}' original first, received status: {1}".format(param, status_code1))
+                        #print("Sent form-urlencoded polluted request with '{0}' original first, received status: {1}".format(param, status_code1))
 
                         polluted_params2 = params.copy()
                         polluted_params2[param] = "{}&{}={}".format(value + "2", param, value)
@@ -721,54 +717,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code2])
                         self.messages.append(response2)
                         self.request_counter += 1
-                        print("Sent form-urlencoded polluted request with '{0}' polluted first, received status: {1}".format(param, status_code2))
+                        #print("Sent form-urlencoded polluted request with '{0}' polluted first, received status: {1}".format(param, status_code2))
 
-
-                '''elif "application/json" in content_type:
-                    # Parse the body into a JSON object
-                    params = json.loads(body)
-                    param1 = []
-                    value1 = []
-                    param2 = []
-                    value2 = []
-                    PolluteB = {}
-                    modified_headers = headers[:]
-                    # Generate polluted requests for each parameter in JSON data
-                    for param, value in params.items():
-                        
-                        param1.append(param)
-                        param2.append(param)
-                        value1.append(value)
-                        value2.append(value)
-
-                    j1=0
-                    j2 = len(value1)
-                    j3 = 0
-                    #send request with add parameters before each parameter
-                    for j1 in range(j2):
-                        param2.insert(j1, param2[j1])
-                        value2.insert(j1, value2[j1] + "2")
-                        
-                        for p , v in zip(param2,value2):
-                            PolluteB.update({p:v})
-                            
-                        print(PolluteB)
-                        param2.pop(j1)
-                        value2.pop(j1)
-                        j1 = j1 + 1
-                        #new_message2 = self._helpers.buildHttpMessage(modified_headers, polluted_body2)
-
-                    j1=0
-                    j2 = len(value1)
-                    #send request with add parameters before each parameter
-                    for j1 in range(j2):
-                        param2.insert(j1+1, param2[j1])
-                        value2.insert(j1+1, value2[j1] + "2")
-                        param2.pop(j1+1)
-                        value2.pop(j1+1)
-                        j1 = j1 + 1
-                    #print(value1)
-                    #print(value2)'''
         if change_method:
             # Get the original HTTP method and URL
             original_method = headers[0].split(" ")[0].upper()
@@ -811,7 +761,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                     self.messages.append(response)
                     self.request_counter += 1
-                    print("Sent request with method '{0}', Content-Type '{1}', received status: {2}".format(modified_method, content_type, status_code))
+                    #print("Sent request with method '{0}', Content-Type '{1}', received status: {2}".format(modified_method, content_type, status_code))
 
                 elif modified_method in ["GET"]:
                     headers[0] = "{}".format(modified_headers[0])
@@ -835,7 +785,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                     self.messages.append(response)
                     self.request_counter += 1
-                    print("Sent request with method '{0}', Content-Type '{1}', received status: {2}".format(modified_method, content_type, status_code))
+                    #print("Sent request with method '{0}', Content-Type '{1}', received status: {2}".format(modified_method, content_type, status_code))
             
             # Switch method
             if original_method in ["GET", "HEAD", "OPTIONS"]:
@@ -866,7 +816,6 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         query_string = "&".join(["{}={}".format(k, v) for k, v in body_params.items()])
                         modified_url = "{}?{}".format(original_url.getPath(), query_string)
                         modified_headers[0] = "{} {} {}".format(new_method, modified_url, modified_headers[0].split(" ")[2])
-                        print(modified_headers)
                         send_modified_request(new_method, modified_headers[:], "", None)
                     except ValueError:
                         print("Error: Body is not valid")
@@ -925,7 +874,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
             self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
             self.messages.append(response)
             self.request_counter += 1
-            print("Sent request with modified path and preserved query, received status:", status_code)
+            #print("Sent request with modified path and preserved query, received status:", status_code)
 
         if AddNS:
             self.modify_body_with_null_bytes(http_service, headers, body, params_to_modify)
@@ -981,7 +930,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                                 self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                                 self.messages.append(response)
                                 self.request_counter += 1
-                                print("Sent encoded body request, received status:", status_code)
+                                #print("Sent encoded body request, received status:", status_code)
                     except json.JSONDecodeError:
                         print("Invalid JSON body")
 
@@ -1014,7 +963,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                             self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                             self.messages.append(response)
                             self.request_counter += 1
-                            print("Sent encoded URL-form request, received status:", status_code)
+                            #print("Sent encoded URL-form request, received status:", status_code)
             
             else:
                 # Handle parameters in the URL (GET requests)
@@ -1065,7 +1014,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
                         self.messages.append(response)
                         self.request_counter += 1
-                        print("Sent request with only '{}' encoded, received status: {}".format(param, status_code))
+                        #print("Sent request with only '{}' encoded, received status: {}".format(param, status_code))
 
         # Display the final response in Burp's UI
         selected_message.setResponse(response.getResponse())
