@@ -95,6 +95,7 @@ email=u%73%65r@example.com
 ### Add Null Bytes, spaces and etc
 Inject (`%00`), (`%20`) and etc into parameter values:
 
+You can see a complete guide at <a href="https://medium.com/p/1d4f86b7d630" target="_blank"> this address.</a>
 
 ## Contributing
 Contributions are welcome! To contribute:
