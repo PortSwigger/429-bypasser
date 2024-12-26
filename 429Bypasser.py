@@ -21,6 +21,8 @@ class CustomTableModel(DefaultTableModel):
     def getColumnClass(self, columnIndex):
         if columnIndex == 0:  # "Number" column
             return Integer  # Ensures numeric sorting
+        if columnIndex == 5:  # "Content Length" column
+            return Integer  # Ensures numeric sorting
         return str  # Default to string for other columns
     
 # Custom cell renderer for left alignment
@@ -66,13 +68,16 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
     
     def __init__(self):
         # Initialize the table with columns: Number, Host, Method, URL, Status Code
-        self.log_table_model = CustomTableModel(["Number", "Host", "Method", "URL", "Status Code"], 0)
+        self.log_table_model = CustomTableModel(["Number", "Host", "Method", "URL", "Status Code", "Content Length"], 0)
         self.log_table = JTable(self.log_table_model)
         self.row_sorter = TableRowSorter(self.log_table_model)  # Initialize the TableRowSorter
         self.log_table.setRowSorter(self.row_sorter)  # Attach the sorter to the table
         # Align the "Number" column to the left
         number_column = self.log_table.getColumnModel().getColumn(0)  # Get the "Number" column (index 0)
         number_column.setCellRenderer(LeftAlignRenderer())  # Apply the custom renderer
+        
+        number_column1 = self.log_table.getColumnModel().getColumn(5)  # Get the "Content Length" column (index 5)
+        number_column1.setCellRenderer(LeftAlignRenderer())  # Apply the custom renderer
 
 
         self.request_text_area = JTextArea()
@@ -143,11 +148,17 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
             if request_bytes:
                 self.request_text_area.setText(self._helpers.bytesToString(request_bytes))
                 self.request_headers_area.setText("\n".join(self._helpers.analyzeRequest(request_bytes).getHeaders()))
+                # Scroll to the top for the request views
+                self.request_text_area.setCaretPosition(0)
+                self.request_headers_area.setCaretPosition(0)
 
             response_bytes = message_info.getResponse()
             if response_bytes:
                 self.response_text_area.setText(self._helpers.bytesToString(response_bytes))
                 self.response_headers_area.setText("\n".join(self._helpers.analyzeResponse(response_bytes).getHeaders()))
+                # Scroll to the top for the response views
+                self.response_text_area.setCaretPosition(0)
+                self.response_headers_area.setCaretPosition(0)
         except Exception as e:
             print("[ERROR] update_message_view:", str(e))
 
@@ -318,6 +329,15 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
             path1 = request_info.getUrl().getPath()
             query1 = request_info.getUrl().getQuery()
 
+            response_info = self._helpers.analyzeResponse(response.getResponse())
+            response_headers = response_info.getHeaders()
+            content_length1 = None
+                
+            for header in response_headers:
+                if header.lower().startswith("content-length:"):
+                    content_length1 = int(header.split(":")[1].strip())
+                    break
+
             if query1 is None:
                 url1 = path1
             else:
@@ -326,7 +346,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
             host1 = response.getHttpService().getHost()
                     
             # Log the request in the table with a placeholder for status code
-            self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+            self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
             self.messages.append(response)
             self.request_counter += 1
             #print("Sent modified request with null byte variant, received status:", status_code)
@@ -414,8 +434,16 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
 
                 # Print the response status code
                 status_code = self._helpers.analyzeResponse(response.getResponse()).getStatusCode()
-
                 request_info = self._helpers.analyzeRequest(response)
+                
+                response_info = self._helpers.analyzeResponse(response.getResponse())
+                response_headers = response_info.getHeaders()
+                content_length1 = None
+                
+                for header in response_headers:
+                    if header.lower().startswith("content-length:"):
+                        content_length1 = int(header.split(":")[1].strip())
+                        break
                 # Extract the full URL and parse out the path and query string
                 path1 = request_info.getUrl().getPath()
                 query1 = request_info.getUrl().getQuery()
@@ -428,7 +456,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 method1 = request_info.getMethod()
                 host1 = response.getHttpService().getHost()
                 # Log the request in the table with a placeholder for status code
-                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                 self.messages.append(response)
                 self.request_counter += 1
                 
@@ -452,6 +480,15 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 path1 = request_info.getUrl().getPath()
                 query1 = request_info.getUrl().getQuery()
 
+                response_info = self._helpers.analyzeResponse(response.getResponse())
+                response_headers = response_info.getHeaders()
+                content_length1 = None
+                
+                for header in response_headers:
+                    if header.lower().startswith("content-length:"):
+                        content_length1 = int(header.split(":")[1].strip())
+                        break
+
                 if query1 is None:
                     url1 = path1
                 else:
@@ -459,7 +496,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 method1 = request_info.getMethod()
                 host1 = response.getHttpService().getHost()
                 # Log the request in the table with a placeholder for status code
-                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                 self.messages.append(response)
                 self.request_counter += 1
                 #print("Sent request with header '{0}', received status: {1}".format(agent, status_code))
@@ -506,9 +543,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     url1 = path1 + "?" + query1
                 method1 = request_info.getMethod()
                 host1 = response.getHttpService().getHost()
+
+                response_info = self._helpers.analyzeResponse(response.getResponse())
+                response_headers = response_info.getHeaders()
+                content_length1 = None
+                
+                for header in response_headers:
+                    if header.lower().startswith("content-length:"):
+                        content_length1 = int(header.split(":")[1].strip())
+                        break
                 
                 # Log the request in the table with a placeholder for status code
-                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                 self.messages.append(response)
                 self.request_counter += 1
                 #print("Sent request with new url '{0}', received status: {1}".format(new_url, status_code))
@@ -542,9 +588,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         url1 = path1 + "?" + query1
                     method1 = request_info.getMethod()
                     host1 = response.getHttpService().getHost()
+
+                    response_info = self._helpers.analyzeResponse(response.getResponse())
+                    response_headers = response_info.getHeaders()
+                    content_length1 = None
+                    
+                    for header in response_headers:
+                        if header.lower().startswith("content-length:"):
+                            content_length1 = int(header.split(":")[1].strip())
+                            break
                     
                     # Log the request in the table with a placeholder for status code
-                    self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                    self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                     self.messages.append(response)
                     self.request_counter += 1
                     #print("Sent request with Random Parameter received status: {0}".format(status_code))
@@ -576,9 +631,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                             url1 = path1 + "?" + query1
                         method1 = request_info.getMethod()
                         host1 = response.getHttpService().getHost()
+
+                        response_info = self._helpers.analyzeResponse(response.getResponse())
+                        response_headers = response_info.getHeaders()
+                        content_length1 = None
+                        
+                        for header in response_headers:
+                            if header.lower().startswith("content-length:"):
+                                content_length1 = int(header.split(":")[1].strip())
+                                break
                         
                         # Log the request in the table with a placeholder for status code
-                        self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                        self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                         self.messages.append(response)
                         self.request_counter += 1
                         #print("Sent request with Random Parameter received status: {0}".format(status_code))
@@ -611,9 +675,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     url1 = path1 + "?" + query1
                 method1 = request_info.getMethod()
                 host1 = response.getHttpService().getHost()
+
+                response_info = self._helpers.analyzeResponse(response.getResponse())
+                response_headers = response_info.getHeaders()
+                content_length1 = None
+                
+                for header in response_headers:
+                    if header.lower().startswith("content-length:"):
+                        content_length1 = int(header.split(":")[1].strip())
+                        break
                 
                 # Log the request in the table with a placeholder for status code
-                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                 self.messages.append(response)
                 self.request_counter += 1
                 #print("Sent request with Random Parameter received status: {0}".format(status_code))
@@ -649,9 +722,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         url1 = path1 + "?" + query1
                     method1 = request_info.getMethod()
                     host1 = response.getHttpService().getHost()
+
+                    response_info = self._helpers.analyzeResponse(response.getResponse())
+                    response_headers = response_info.getHeaders()
+                    content_length1 = None
+                    
+                    for header in response_headers:
+                        if header.lower().startswith("content-length:"):
+                            content_length1 = int(header.split(":")[1].strip())
+                            break
                     
                     # Log the request in the table with a placeholder for status code
-                    self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                    self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                     self.messages.append(response)
                     self.request_counter += 1
                     #print("Sent request for polluted URL '{0}', received status: {1}".format(polluted_url, status_code))
@@ -687,9 +769,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                             url1 = path1 + "?" + query1
                         method1 = request_info.getMethod()
                         host1 = response1.getHttpService().getHost()
+
+                        response_info = self._helpers.analyzeResponse(response1.getResponse())
+                        response_headers = response_info.getHeaders()
+                        content_length1 = None
+                        
+                        for header in response_headers:
+                            if header.lower().startswith("content-length:"):
+                                content_length1 = int(header.split(":")[1].strip())
+                                break
                         
                         # Log the request in the table with a placeholder for status code
-                        self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code1])
+                        self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code1, content_length1])
                         self.messages.append(response1)
                         self.request_counter += 1
                         #print("Sent form-urlencoded polluted request with '{0}' original first, received status: {1}".format(param, status_code1))
@@ -712,9 +803,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                             url1 = path1 + "?" + query1
                         method1 = request_info.getMethod()
                         host1 = response2.getHttpService().getHost()
+
+                        response_info = self._helpers.analyzeResponse(response2.getResponse())
+                        response_headers = response_info.getHeaders()
+                        content_length2 = None
+                        
+                        for header in response_headers:
+                            if header.lower().startswith("content-length:"):
+                                content_length2 = int(header.split(":")[1].strip())
+                                break
                         
                         # Log the request in the table with a placeholder for status code
-                        self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code2])
+                        self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code2, content_length2])
                         self.messages.append(response2)
                         self.request_counter += 1
                         #print("Sent form-urlencoded polluted request with '{0}' polluted first, received status: {1}".format(param, status_code2))
@@ -756,9 +856,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         url1 = path1 + "?" + query1
                     method1 = request_info.getMethod()
                     host1 = response.getHttpService().getHost()
+
+                    response_info = self._helpers.analyzeResponse(response.getResponse())
+                    response_headers = response_info.getHeaders()
+                    content_length1 = None
+                    
+                    for header in response_headers:
+                        if header.lower().startswith("content-length:"):
+                            content_length1 = int(header.split(":")[1].strip())
+                            break
                     
                     # Log the request in the table with a placeholder for status code
-                    self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                    self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                     self.messages.append(response)
                     self.request_counter += 1
                     #print("Sent request with method '{0}', Content-Type '{1}', received status: {2}".format(modified_method, content_type, status_code))
@@ -780,9 +889,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         url1 = path1 + "?" + query1
                     method1 = request_info.getMethod()
                     host1 = response.getHttpService().getHost()
+
+                    response_info = self._helpers.analyzeResponse(response.getResponse())
+                    response_headers = response_info.getHeaders()
+                    content_length1 = None
+                    
+                    for header in response_headers:
+                        if header.lower().startswith("content-length:"):
+                            content_length1 = int(header.split(":")[1].strip())
+                            break
                     
                     # Log the request in the table with a placeholder for status code
-                    self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                    self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                     self.messages.append(response)
                     self.request_counter += 1
                     #print("Sent request with method '{0}', Content-Type '{1}', received status: {2}".format(modified_method, content_type, status_code))
@@ -869,9 +987,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 url1 = path1 + "?" + query1
             method1 = request_info.getMethod()
             host1 = response.getHttpService().getHost()
+
+            response_info = self._helpers.analyzeResponse(response.getResponse())
+            response_headers = response_info.getHeaders()
+            content_length1 = None
+                
+            for header in response_headers:
+                if header.lower().startswith("content-length:"):
+                    content_length1 = int(header.split(":")[1].strip())
+                    break
                     
             # Log the request in the table with a placeholder for status code
-            self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+            self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
             self.messages.append(response)
             self.request_counter += 1
             #print("Sent request with modified path and preserved query, received status:", status_code)
@@ -925,9 +1052,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                                     url1 = path1 + "?" + query1
                                 method1 = request_info.getMethod()
                                 host1 = response.getHttpService().getHost()
+
+                                response_info = self._helpers.analyzeResponse(response.getResponse())
+                                response_headers = response_info.getHeaders()
+                                content_length1 = None
+                                
+                                for header in response_headers:
+                                    if header.lower().startswith("content-length:"):
+                                        content_length1 = int(header.split(":")[1].strip())
+                                        break
                     
                                 # Log the request in the table with a placeholder for status code
-                                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                                self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                                 self.messages.append(response)
                                 self.request_counter += 1
                                 #print("Sent encoded body request, received status:", status_code)
@@ -958,9 +1094,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                                 url1 = path1 + "?" + query1
                             method1 = request_info.getMethod()
                             host1 = response.getHttpService().getHost()
+
+                            response_info = self._helpers.analyzeResponse(response.getResponse())
+                            response_headers = response_info.getHeaders()
+                            content_length1 = None
+                            
+                            for header in response_headers:
+                                if header.lower().startswith("content-length:"):
+                                    content_length1 = int(header.split(":")[1].strip())
+                                    break
                     
                             # Log the request in the table with a placeholder for status code
-                            self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                            self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                             self.messages.append(response)
                             self.request_counter += 1
                             #print("Sent encoded URL-form request, received status:", status_code)
@@ -1009,9 +1154,18 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                             url1 = path1 + "?" + query1
                         method1 = request_info.getMethod()
                         host1 = response.getHttpService().getHost()
+
+                        response_info = self._helpers.analyzeResponse(response.getResponse())
+                        response_headers = response_info.getHeaders()
+                        content_length1 = None
+                        
+                        for header in response_headers:
+                            if header.lower().startswith("content-length:"):
+                                content_length1 = int(header.split(":")[1].strip())
+                                break
                     
                         # Log the request in the table with a placeholder for status code
-                        self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code])
+                        self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
                         self.messages.append(response)
                         self.request_counter += 1
                         #print("Sent request with only '{}' encoded, received status: {}".format(param, status_code))
