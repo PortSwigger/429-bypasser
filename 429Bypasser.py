@@ -329,14 +329,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
             path1 = request_info.getUrl().getPath()
             query1 = request_info.getUrl().getQuery()
 
-            response_info = self._helpers.analyzeResponse(response.getResponse())
-            response_headers = response_info.getHeaders()
-            content_length1 = None
-                
-            for header in response_headers:
-                if header.lower().startswith("content-length:"):
-                    content_length1 = int(header.split(":")[1].strip())
-                    break
+            response_info = response.getResponse()
+            content_length1 = len(response_info)
 
             if query1 is None:
                 url1 = path1
@@ -436,14 +430,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 status_code = self._helpers.analyzeResponse(response.getResponse()).getStatusCode()
                 request_info = self._helpers.analyzeRequest(response)
                 
-                response_info = self._helpers.analyzeResponse(response.getResponse())
-                response_headers = response_info.getHeaders()
-                content_length1 = None
-                
-                for header in response_headers:
-                    if header.lower().startswith("content-length:"):
-                        content_length1 = int(header.split(":")[1].strip())
-                        break
+                response_info = response.getResponse()
+                content_length1 = len(response_info)
                 # Extract the full URL and parse out the path and query string
                 path1 = request_info.getUrl().getPath()
                 query1 = request_info.getUrl().getQuery()
@@ -480,14 +468,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 path1 = request_info.getUrl().getPath()
                 query1 = request_info.getUrl().getQuery()
 
-                response_info = self._helpers.analyzeResponse(response.getResponse())
-                response_headers = response_info.getHeaders()
-                content_length1 = None
-                
-                for header in response_headers:
-                    if header.lower().startswith("content-length:"):
-                        content_length1 = int(header.split(":")[1].strip())
-                        break
+                response_info = response.getResponse()
+                content_length1 = len(response_info)
 
                 if query1 is None:
                     url1 = path1
@@ -544,14 +526,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 method1 = request_info.getMethod()
                 host1 = response.getHttpService().getHost()
 
-                response_info = self._helpers.analyzeResponse(response.getResponse())
-                response_headers = response_info.getHeaders()
-                content_length1 = None
-                
-                for header in response_headers:
-                    if header.lower().startswith("content-length:"):
-                        content_length1 = int(header.split(":")[1].strip())
-                        break
+                response_info = response.getResponse()
+                content_length1 = len(response_info)
                 
                 # Log the request in the table with a placeholder for status code
                 self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -589,14 +565,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     method1 = request_info.getMethod()
                     host1 = response.getHttpService().getHost()
 
-                    response_info = self._helpers.analyzeResponse(response.getResponse())
-                    response_headers = response_info.getHeaders()
-                    content_length1 = None
-                    
-                    for header in response_headers:
-                        if header.lower().startswith("content-length:"):
-                            content_length1 = int(header.split(":")[1].strip())
-                            break
+                    response_info = response.getResponse()
+                    content_length1 = len(response_info)
                     
                     # Log the request in the table with a placeholder for status code
                     self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -632,14 +602,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         method1 = request_info.getMethod()
                         host1 = response.getHttpService().getHost()
 
-                        response_info = self._helpers.analyzeResponse(response.getResponse())
-                        response_headers = response_info.getHeaders()
-                        content_length1 = None
-                        
-                        for header in response_headers:
-                            if header.lower().startswith("content-length:"):
-                                content_length1 = int(header.split(":")[1].strip())
-                                break
+                        response_info = response.getResponse()
+                        content_length1 = len(response_info)
                         
                         # Log the request in the table with a placeholder for status code
                         self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -676,14 +640,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                 method1 = request_info.getMethod()
                 host1 = response.getHttpService().getHost()
 
-                response_info = self._helpers.analyzeResponse(response.getResponse())
-                response_headers = response_info.getHeaders()
-                content_length1 = None
-                
-                for header in response_headers:
-                    if header.lower().startswith("content-length:"):
-                        content_length1 = int(header.split(":")[1].strip())
-                        break
+                response_info = response.getResponse()
+                content_length1 = len(response_info)
                 
                 # Log the request in the table with a placeholder for status code
                 self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -723,14 +681,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     method1 = request_info.getMethod()
                     host1 = response.getHttpService().getHost()
 
-                    response_info = self._helpers.analyzeResponse(response.getResponse())
-                    response_headers = response_info.getHeaders()
-                    content_length1 = None
-                    
-                    for header in response_headers:
-                        if header.lower().startswith("content-length:"):
-                            content_length1 = int(header.split(":")[1].strip())
-                            break
+                    response_info = response.getResponse()
+                    content_length1 = len(response_info)
                     
                     # Log the request in the table with a placeholder for status code
                     self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -770,14 +722,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         method1 = request_info.getMethod()
                         host1 = response1.getHttpService().getHost()
 
-                        response_info = self._helpers.analyzeResponse(response1.getResponse())
-                        response_headers = response_info.getHeaders()
-                        content_length1 = None
-                        
-                        for header in response_headers:
-                            if header.lower().startswith("content-length:"):
-                                content_length1 = int(header.split(":")[1].strip())
-                                break
+                        response_info = response1.getResponse()
+                        content_length1 = len(response_info)
                         
                         # Log the request in the table with a placeholder for status code
                         self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code1, content_length1])
@@ -804,14 +750,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         method1 = request_info.getMethod()
                         host1 = response2.getHttpService().getHost()
 
-                        response_info = self._helpers.analyzeResponse(response2.getResponse())
-                        response_headers = response_info.getHeaders()
-                        content_length2 = None
-                        
-                        for header in response_headers:
-                            if header.lower().startswith("content-length:"):
-                                content_length2 = int(header.split(":")[1].strip())
-                                break
+                        response_info = response2.getResponse()
+                        content_length2 = len(response_info)
                         
                         # Log the request in the table with a placeholder for status code
                         self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code2, content_length2])
@@ -857,14 +797,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     method1 = request_info.getMethod()
                     host1 = response.getHttpService().getHost()
 
-                    response_info = self._helpers.analyzeResponse(response.getResponse())
-                    response_headers = response_info.getHeaders()
-                    content_length1 = None
-                    
-                    for header in response_headers:
-                        if header.lower().startswith("content-length:"):
-                            content_length1 = int(header.split(":")[1].strip())
-                            break
+                    response_info = response.getResponse()
+                    content_length1 = len(response_info)
                     
                     # Log the request in the table with a placeholder for status code
                     self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -890,14 +824,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                     method1 = request_info.getMethod()
                     host1 = response.getHttpService().getHost()
 
-                    response_info = self._helpers.analyzeResponse(response.getResponse())
-                    response_headers = response_info.getHeaders()
-                    content_length1 = None
-                    
-                    for header in response_headers:
-                        if header.lower().startswith("content-length:"):
-                            content_length1 = int(header.split(":")[1].strip())
-                            break
+                    response_info = response.getResponse()
+                    content_length1 = len(response_info)
                     
                     # Log the request in the table with a placeholder for status code
                     self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -988,14 +916,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
             method1 = request_info.getMethod()
             host1 = response.getHttpService().getHost()
 
-            response_info = self._helpers.analyzeResponse(response.getResponse())
-            response_headers = response_info.getHeaders()
-            content_length1 = None
-                
-            for header in response_headers:
-                if header.lower().startswith("content-length:"):
-                    content_length1 = int(header.split(":")[1].strip())
-                    break
+            response_info = response.getResponse()
+            content_length1 = len(response_info)
                     
             # Log the request in the table with a placeholder for status code
             self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -1053,14 +975,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                                 method1 = request_info.getMethod()
                                 host1 = response.getHttpService().getHost()
 
-                                response_info = self._helpers.analyzeResponse(response.getResponse())
-                                response_headers = response_info.getHeaders()
-                                content_length1 = None
-                                
-                                for header in response_headers:
-                                    if header.lower().startswith("content-length:"):
-                                        content_length1 = int(header.split(":")[1].strip())
-                                        break
+                                response_info = response.getResponse()
+                                content_length1 = len(response_info)
                     
                                 # Log the request in the table with a placeholder for status code
                                 self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -1095,14 +1011,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                             method1 = request_info.getMethod()
                             host1 = response.getHttpService().getHost()
 
-                            response_info = self._helpers.analyzeResponse(response.getResponse())
-                            response_headers = response_info.getHeaders()
-                            content_length1 = None
-                            
-                            for header in response_headers:
-                                if header.lower().startswith("content-length:"):
-                                    content_length1 = int(header.split(":")[1].strip())
-                                    break
+                            response_info = response.getResponse()
+                            content_length1 = len(response_info)
                     
                             # Log the request in the table with a placeholder for status code
                             self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
@@ -1155,14 +1065,8 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
                         method1 = request_info.getMethod()
                         host1 = response.getHttpService().getHost()
 
-                        response_info = self._helpers.analyzeResponse(response.getResponse())
-                        response_headers = response_info.getHeaders()
-                        content_length1 = None
-                        
-                        for header in response_headers:
-                            if header.lower().startswith("content-length:"):
-                                content_length1 = int(header.split(":")[1].strip())
-                                break
+                        response_info = response.getResponse()
+                        content_length1 = len(response_info)
                     
                         # Log the request in the table with a placeholder for status code
                         self.log_table_model.addRow([self.request_counter, host1, method1, url1, status_code, content_length1])
