@@ -1,0 +1,13 @@
+Uuid: 2d75ae4a85fb4b5baabfe66282a4e55b
+ExtensionType: 2
+Name: 429 Bypasser
+RepoName: 429-bypasser
+ScreenVersion: 1.0.0
+SerialVersion: 1
+MinPlatformVersion: 0
+ProOnly: False
+Author: iliyaafifi
+ShortDescription: 429 Bypasser is a Burp Suite extension used to bypass HTTP 429 rate-limiting mechanisms during penetration testing. It employs various strategies like changing user-agent, adding custom headers, and altering request methods.
+EntryPoint: dist/app.py
+BuildCommand: 
+SupportedProducts: Pro, Community
