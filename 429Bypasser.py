@@ -13,7 +13,7 @@ from javax.swing.table import DefaultTableModel
 from javax.swing.table import TableRowSorter
 from javax.swing.table import DefaultTableCellRenderer
 from javax.swing.SwingConstants import LEFT
-from burp import IBurpExtender, IHttpListener, IContextMenuFactory, ITab
+from burp import IBurpExtender, IContextMenuFactory, ITab
 from java.util import ArrayList
 from javax.swing import JMenuItem, JCheckBox, JPanel,JLabel, JTextField, JOptionPane, SwingUtilities, BoxLayout, JScrollPane, JTable, JSplitPane, JTabbedPane, JTextArea, JButton, Box
 
@@ -31,7 +31,7 @@ class LeftAlignRenderer(DefaultTableCellRenderer):
         DefaultTableCellRenderer.__init__(self)  # Explicit call to the parent class constructor
         self.setHorizontalAlignment(LEFT)  # Set alignment to LEFT
 
-class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
+class BurpExtender(IBurpExtender, IContextMenuFactory, ITab):
     HEADERS_FILE_PATH = os.path.join(os.getcwd(), "wordlists", "headers.txt")
 
     # Function to read headers from the file
@@ -219,14 +219,9 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
         callbacks.setExtensionName("429 Bypasser")
-        #print("Hello Burp")
 
-        callbacks.registerHttpListener(self)
         callbacks.addSuiteTab(self)
         callbacks.registerContextMenuFactory(self)
-
-    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
-        pass
     
     def getpath (self, content):
         request_info = self._helpers.analyzeRequest(content)
