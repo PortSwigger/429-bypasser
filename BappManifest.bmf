@@ -1,0 +1,13 @@
+Uuid: 19c6fa5cca1f4589b70cf19a9f71e7b8
+ExtensionType: 2
+Name: 429 Bypasser
+RepoName: 429-bypasser
+ScreenVersion: 1.0
+SerialVersion: 1
+MinPlatformVersion: 0
+ProOnly: False
+Author: Iliya
+ShortDescription: Employs various techniques to circumvent rate-limiting and provides a flexible interface for customizing bypass strategies.
+EntryPoint: 429Bypasser.py
+BuildCommand: 
+SupportedProducts: Pro, Community

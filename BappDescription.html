@@ -1,0 +1,33 @@
+<p>This extension is designed to help penetration testers and security professionals bypass HTTP 429 (Too Many Requests) rate-limiting mechanisms. The extension employs various techniques to circumvent rate-limiting and provides a flexible interface for customizing bypass strategies.</p>
+
+<h2>Features</h2>
+
+<ul>
+	<li>Add Custom Headers</li>
+	<li>Change User Agent</li>
+	<li>Use Capital Letters</li>
+	<li>Use Random Parameters</li>
+	<li>Server-side HTTP Parameter Pollution</li>
+	<li>Change HTTP Method</li>
+	<li>Route Alteration</li>
+	<li>Encoding</li>
+	<li>Add Null Bytes, spaces and etc</li>
+</ul>
+
+<p>For encoding, null bytes, and parameter pollution, users can specify which parameter(s) to target. If no parameter is specified, the extension applies changes to all parameters by default.</p>
+
+<h2>Usage</h2>
+
+<ol>
+	<li>Right-click on the desired request and choose "Extensions -&gt; 429 Bypasser -&gt; Send To 429 Bypasser tab".</li>
+	<li>Select the methods you want to use for bypassing 429 responses.</li>
+	<li>Specify parameters for encoding, null byte insertion, or parameter pollution if needed.</li>
+	<li>Click the OK button.</li>
+</ol>
+
+<p>By default, the extension applies changes to all parameters one by one if none are specified.</p>
+
+<h3>Viewing results</h3>
+
+<p>In the 429 Bypasser tab added at the top of Burp Suite, you can view the requests sent by the extension.<br>
+You can sort these requests by the Status Code column to help identify which requests successfully bypassed the rate limit.</p>
